@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- saved from url=(0084)http://eecs.oregonstate.edu/ecampus-video/CS290/core-content/ajax-forms/js-http.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>HTTP and JavaScript</title>
+  <link rel="stylesheet" href="./HTTP and JavaScript_files/bootstrap.min.css">
+  <link rel="stylesheet" href="./HTTP and JavaScript_files/cs290-style.css">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-9 col-offset-2">
+      <h1>HTTP and JavaScript</h1>
+      <section>
+        <h2>Intro</h2>
+        <p>This page is going to discuss how one uses JavaScript to make HTTP calls. Up until now we have let the browsers default behavior do that. We enter in a URL of something like https://google.com, the browser makes a GET request and the page is displayed. Or we hit the submit button on a form and it makes a POST to the address specified in the forms <i>action</i> property. Then the results are displayed. It was all fairly automatic.</p>
+        <p>Now we are going to put together pretty much everything we have learned up until this point to make HTTP calls using JavaScript rather than letting the browser do that. Then we are going to submit user supplied data using forms to those requests and finally we are going to do it asynchronous!</p>
+        <p>The important thing to remember is that there are a lot of small steps and you have done them all before. There is not really anything <em>new</em> here. It is just putting a lot of stuff you have already done together.</p>
+      </section>
+      <section>
+        <h2>AJAX</h2>
+        <h3>The Name</h3>
+        <p>To this day I am still not sure if it is AJAX or Ajax. I see it both ways. No one has given me a convincing argument that one is right. Also the name is dumb. It stands for Asynchronous JavaScript and  XML. But rarely is XML actually used anymore. It is mostly JSON these days. But AJAJSON just does not really roll off the tongue so Ajax has stuck.</p>
+        <h3>A GET Request</h3>
+        <p>But enough about names. What is it actually doing? Lets take a look at one of the examples from Eloquent JavaScript</p>
+        <pre><code>var req = new XMLHttpRequest();
+req.open("GET", "example/fruit.json", false);
+req.send(null);
+console.log(JSON.parse(req.responseText));
+// -&gt; {banana: "yellow", lemon: "yellow", cherry: "red"}</code></pre>
+        <p>To date if we needed to access data in our JavaScript we needed to basically hard code it into the JavaScript file. That's really not a great way to do things. There is lots of interesting information out there and it would be nice to have another way to get it when we need it.</p>
+        <p>That is exactly what this code sample is doing.</p>
+        <p><em><code>XMLHttpRequest</code></em> is an object that can make an HTTP request and return the data it gets from that request. It is a little bit like a file stream in C++. It opens a connection to a resource maybe sends it data, maybe gets some data.</p>
+        <p>In this case it is <em>opening</em> a GET request to the resource <code>example/fruit.json</code> which is a .json file on the same server the JavaScript is on. The <code>false</code> argument says that it will be a synchronous request (more about this later). It then sends the request, the <code>null</code> means there is no additional data being sent with it. Then it logs the <code>responseText</code> from the request. Basically what it got back from the request. As a JavaScript object that was parsed from a JSON string.</p>
+        <p>If you try to run this code it won't work unless you have a JSON file called fruit.json in an example directory. This also marks the end of our use of JavaScript Fiddles to show working code samples. Due to security and networking issues JSFiddle does not support Ajax requests from a fiddle. So if you try the examples from these pages or from the book in JS Fiddle and it does not work, that is expected.</p>
+        <p>So lets get an example you <em>can</em> try:</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script&gt;
+      var req = new XMLHttpRequest();
+      req.open("GET", "http://api.openweathermap.org/data/2.5/weather?q=Corvallis,or&amp;appid=fa7d80c48643dfadde2cced1b1be6ca1", false);
+      req.send(null);
+      console.log(JSON.parse(req.responseText));
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <p>This code <em>should</em> work if you create a new local HTML document and copy and paste it in. Historically the Chrome browser would not allow Ajax calls to be made from localhost (that is a file opened directly from your computer). However, that issue seems to be fixed now. If you can't open it in Chrome, try FireFox instead. In either browser F12 should open up the developer tools. If you look at the console you should see an Object that contains information about the current weather in Corvallis.</p>
+        <p>So lets talk about what is happening here. Is is essentially the same thing that we saw in the example from the book. The important thing to pay attention to is the URL.</p>
+        <pre><code>http://api.openweathermap.org/data/2.5/weather?q=Corvallis,or&amp;appid=fa7d80c48643dfadde2cced1b1be6ca1</code></pre>
+        <p><code>http://api.openweathermap.org/data/2.5/weather</code> is the root URL. Then we pass it two parameters in the URL because this is a GET request. Those are <code>q</code> and <code>appid</code>. The first lets Open Weather Map know what city we want the weather from (Corvallis, Oregon in this case) and the 2nd parameter is the key associated with my app.</p>
+        <p>This is how almost all GET requests are going to be handled. The data to be sent will be part of the URL. So we may need to <em>build</em> the URL by appending a bunch of things to the end of it that we get from user input, but it will all be part of the URL. So in that sense it is pretty straight forward. If you need to go back to the first weeks of the class to get refreshed on the format of GET parameters.</p>
+        <iframe id="kaltura_player" src="./HTTP and JavaScript_files/391241.html" width="554" height="366" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" frameborder="0"></iframe>
+        <h3>POST Requests</h3>
+        <p>In general we use GET requests for retrieving data and POST requests for creating data. (There are exceptions, like providing a username/password is done with a POST because we don't want that showing up in a URL) But in general GETs get data and POSTs make data. So you tend to work more often with GETs than POSTs. But POSTs are still important. However, because they are used for sending data they tend to be a little more complex. Lets look at an example. The API we are using here is Google's <a href="https://developers.google.com/url-shortener/v1/getting_started#intro">URL shortener API</a></p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script&gt;
+      var req = new XMLHttpRequest();
+      req.open("POST", "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAh2sUzWPm-pRQCbgyZijqWcKGFcoXeK2o", false);
+      req.setRequestHeader('Content-Type', 'application/json');
+      req.send('{"longUrl":"http://www.oregonstate.edu"}');
+      console.log(JSON.parse(req.responseText));
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <p>The above code sample will only work from an OSU server due to the permissions I have set up on the key I used for it. You can access it on OSU's servers <a href="http://eecs.oregonstate.edu/ecampus-video/CS290/core-content/ajax-forms/url-example.html">here</a>. So it will not run if you copy and paste it to use locally. If you generate your own key and replace my key then you can use it locally.</p>
+        <p>So what it is doing? What is different from the GET request we made earlier? Well, according to the directions <a href="https://developers.google.com/url-shortener/v1/getting_started#shorten">here</a> which provide us this example</p>
+        <pre><code>POST https://www.googleapis.com/urlshortener/v1/url
+Content-Type: application/json
+
+{"longUrl": "http://www.google.com/"}</code></pre>
+        <p>We need to send a POST request to <code>https://www.googleapis.com/urlshortener/v1/url</code>. And we need to send <em>our</em> data as <code>application/json</code>. This means we need to send a string that can be interpreted as JSON. The format of the data is shown below that and it is <code>{"longUrl": "http://www.google.com/"}</code>. So we need to send a <em>string</em> which is represents the JSON object with a single property called <code>longUrl</code> with a key corresponding to the URL we want to shorten.</p>
+        <p>If that is successful we will get back a response from the server that looks like this:</p>
+        <pre><code>{
+ "kind": "urlshortener#url",
+ "id": "http://goo.gl/fbsS",
+ "longUrl": "http://www.google.com/"
+}</code></pre>
+        <p>In this case it is telling us that we created a shortened URL <code>http://goo.gl/fbsS</code> that will link to <code>http://www.google.com/</code>. What we do with that reply is up to us. In the example above it just logs the object to the console so we can look at it. But we could show it to the user in the browser if we wanted to.</p>
+      </section>
+      <iframe id="kaltura_player" src="./HTTP and JavaScript_files/391241(1).html" width="554" height="366" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" frameborder="0"></iframe>
+      <section>
+        <h2>Activity</h2>
+        <p>Use the <a href="http://openweathermap.org/current">Open Weather Map</a> API to make requests to Open Weather Map to get the weather by zip code. It is fine to hard code the zip codes in the URL. Then log the output to the console to make sure it is working. If you get a long string of data that had words like rain or wind then it is working.</p>
+      </section>
+      <section>
+        <h2>Review</h2>
+        <p>This is the first step in making HTTP requests via JavaScript. We are going to add quite a bit more </p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="./HTTP and JavaScript_files/jquery.min.js"></script>
+<script src="./HTTP and JavaScript_files/bootstrap.min.js"></script>
+
+</body></html>
