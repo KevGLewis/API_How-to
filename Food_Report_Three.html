@@ -60,7 +60,7 @@
                     &lt;input type="text" name="searchValue" id="searchValue" placeholder="Search Value" /&gt;
                 &lt;/div&gt;
                 &lt;div class="3u$ 12u$(small)"&gt;
-                    &lt;input type="submit" value="Search" class="fit" onClick="searchFood(event)" /&gt;
+                    &lt;input type="submit" value="Search" class="fit" onClick="searchFoodButton(event)" /&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
         &lt;/form&gt;
@@ -83,25 +83,26 @@
                     &lt;tr&gt;
                         &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
                         &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
-                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt;
                     &lt;/tr&gt;
                     &lt;tr&gt;
                         &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
                         &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
-                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt;
                     &lt;/tr&gt;
                     &lt;tr&gt;
                         &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
                         &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
-                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt;
                     &lt;/tr&gt;
                     &lt;tr&gt;
-                        &lt;td class="ndb_numb"&gt;nNDB#&lt;/td&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
                         &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
-                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt;
                     &lt;/tr&gt;
                 &lt;/tbody&gt;
             &lt;/table&gt;
+        &lt;/div&gt;
         &lt;h2&gt;Nutritional Information:&lt;/h2&gt;
         &lt;div class="table-wrapper"&gt;
             &lt;table id="nutrition_info"&gt;
@@ -116,16 +117,17 @@
                   
                 &lt;/tbody&gt;
             &lt;/table&gt;
-        &lt;/div&gt;
- &lt;script src="example.js"&gt;&lt;script&gt;
-  &lt;/body&gt;
-&lt;/html&gt; </code></pre>
+            &lt;ul class="actions"&gt;
+                &lt;li&gt;&lt;span class="button disabled" id="backButton" onclick=""&gt;Back&lt;/span&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;span class="button disabled" id="forwardButton" onclick=""&gt;Forward&lt;/span&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt; </code></pre>
                                 </div>
 								<div class="6u$ 12u$(medium)" style="overflow:scroll; height:400px;">Javascript:
                         
                                     <pre><code>var apiKey = INSERT_KEY_HERE
 
-function searchFood(event){
+function searchFoodButton(event){
     
     var searchValue = document.getElementById("searchValue").value;
     var ndbNumb = document.getElementsByClassName("ndb_numb");
@@ -140,7 +142,7 @@ function searchFood(event){
           for(var i = 0; i < resultDescriptions.length; i++){
               resultDescriptions[i].textContent = response.list.item[i].name;
               ndbNumb[i].textContent = response.list.item[i].ndbno;
-              searchButtons[i].setAttribute( "onclick", "buttonSelect(event, "+response.list.item[i].ndbno+")" );
+              searchButtons[i].setAttribute( "onclick", "buttonSelect(event, "+response.list.item[i].ndbno+",0)" );
               
           }
           
@@ -153,14 +155,21 @@ function searchFood(event){
     event.preventDefault();
 }
 
-
-function buttonSelect(event, ndbIn){
+function buttonSelect(event, ndbIn, offsetIn){
     
     var i;
+    var maxNutInd = offsetIn + 5;
+    var  = offsetIn - 5;
+    if(backButtInd < 0)
+        backButtInd = 0;
+    
     var nutTable = document.getElementById("nutrition_body");
     while (nutTable.firstChild) {
         nutTable.removeChild(nutTable.firstChild);
     }
+    
+    var forwardButton = document.getElementById("forwardButton");
+    var backButton = document.getElementById("backButton");
 
     
     var req = new XMLHttpRequest();
@@ -168,7 +177,13 @@ function buttonSelect(event, ndbIn){
     req.addEventListener('load',function(){
       if(req.status >= 200 && req.status < 400){
         var response = JSON.parse(req.responseText);
-        for(i = 0; i < 5; i++){
+        
+        var nutrientLength = response.report.food.nutrients.length;
+        if(offsetIn + 5 > nutrientLength){
+            maxNutInd = nutrientLength;
+        }
+            
+        for(i = offsetIn; i < maxNutInd; i++){
             var newTr = document.createElement("tr");
             
             var nameIn = document.createElement("td");
@@ -186,7 +201,25 @@ function buttonSelect(event, ndbIn){
             nutTable.appendChild(newTr);
         }
         
+        forwardButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + maxNutInd +")")
+        backButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + backButtInd +")")  
           
+        if(maxNutInd === nutrientLength){
+            console.log(1);
+            forwardButton.setAttribute("class", "button disabled");
+            backButton.setAttribute("class", "button")
+        
+        }else if(maxNutInd <= 5){
+            console.log(2);
+            forwardButton.setAttribute("class", "button");
+            backButton.setAttribute("class", "button disabled")
+        
+        }else{
+            console.log(3);
+            forwardButton.setAttribute("class", "button");
+            backButton.setAttribute("class", "button")
+        }
+              
       } else {
         console.log("Error in network request: " + req.statusText);
       }
@@ -198,38 +231,62 @@ function buttonSelect(event, ndbIn){
                                 </div>
                             </div>
                             <h3>HTML:</h3>
-                            <p>A new blank table was added to the HTML. In lieu of simply filling out the table, our javascript will create the table and add it to the html. The advantage is the table will only be present when there is information to be shown. Both approaches are valid but the ultimate choice is up to the web developer.
+                            <p>Not a whole lot new here. Only the forward and back buttons were added.
                             </p>
                             <h3>Javascript:</h3>
-                            The buttonSelect function was fleshed out to add the table to our html. At a broad level, the function finds the body of the empty table, makes a GET request to the usda API and receives the food report, creates a row of the table and fills it out with the appropriate information, appends the newly created row to the body of the table, and finally runs through several of the nutrients.Let's go into more detail about what is going on.
+                                    
+                            <pre><code>searchButtons[i].setAttribute( "onclick", "buttonSelect(event, "+response.list.item[i].ndbno+",0)" );              
+...
+
+function buttonSelect(event, ndbIn, offsetIn)</code></pre>
                             
-                            <pre><code>var nutTable = document.getElementById("nutrition_body");
-    while (nutTable.firstChild) {
-        nutTable.removeChild(nutTable.firstChild);
-    }</code></pre>
-                            First, the function grabs the body of our nutrition table via its id. Then it will determine whether or not the table is empty. If it is not, the function will run through the body's nodes, removing the first child until no children exists. This is accomplished by the while loop.
+                                <p>First, we added the offset parameter to the buttonselect function. The offset indicates the first index within the nutrient array that we want to display. This will let us increase or decrease the chunk of 5 nutrients that we display. </p>
                             
-                            <pre><code>var req = new XMLHttpRequest();
-    req.open('GET', 'https://api.nal.usda.gov/ndb/reports/?ndbno='+ ndbIn +'&type=b&format=json&api_key=' + apiKey, true)</code></pre>
+                            <pre><code>var maxNutInd = offsetIn + 5;
+    var  = offsetIn - 5;
+    if(backButtInd < 0)
+        backButtInd = 0;</code></pre>
+                           <p>Now the function will store the maximum bound of indexes that will be displayed. For example, if the maximum index equals 20, then the maximum index that will be displayed is 19. The starting index to be passed if the back button is clicked is also stored. This function ensures that the smallest index passed to the back button is 0. Note: this function displays the nutrients in 5 item chunks, but can be changed to whatever you would like.</p>
+                           
                             
-                            The function then opens a request to the food report api address. Notice that we are passing the ndbIn variable. As you may recall, this number is passed to the onclick function when we create our select buttons.
+                            <pre><code> var forwardButton = document.getElementById("forwardButton");
+var backButton = document.getElementById("backButton");</code></pre>
                             
-                            <pre><code>req.addEventListener('load',function(){
-      if(req.status >= 200 && req.status < 400){
-        var response = JSON.parse(req.responseText);
-        for(i = 0; i < 5; i++){
-            var newTr = document.createElement("tr");
+                            <p>The forward and back buttons are retrieved based on their id's.</p>
+                            
+                            <pre><code>var nutrientLength = response.report.food.nutrients.length;
+if(offsetIn + 5 > nutrientLength){
+    maxNutInd = nutrientLength;
+}
             
-            var nameIn = document.createElement("td");
-            nameIn.textContent = response.report.food.nutrients[i].name;
-            newTr.appendChild(nameIn);
-            
-            ....
-            
-            nutTable.appendChild(newTr);
-        }</code></pre>
-                            Finally, once the function receives a response from its call it will loop through the first five nutrients in the nutrient list. For each, it will create a row and then add a data cell and fill it in with the appropriate information; either name, value, or unit. Each data cell is then appended to the new row which is eventually appended to the table. The question you are probably asking if what if we want to display the nutrients that are not within the top five? That topic will be explored on the next page.
+        for(i = offsetIn; i < maxNutInd; i++){</code></pre>
+        
+                            <p>
+                            We need to ensure that the function does not try to access an index beyond the bounds of the nutrient array. The above code will set the max index equal to the nutrient array length if it is out of bounds.
                             </p>
+                            
+                            <pre><code>forwardButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + maxNutInd +")")
+backButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + backButtInd +")") </code></pre>
+        
+                            <p>Above we associate a call to the buttonSelect function with both buttons. The forward button is passed the maximum nutrient boundary index. Remember, this index was not previously displayed and represents the first index that will be displayed when the function runs. The back button is passed the back button index that was previously calculated. When the buttons are clicked, it will cause the table to be erased and the next 5 or previoius 5 items to be displayed.</p>
+                            
+                            <pre><code>if(maxNutInd === nutrientLength){
+            console.log(1);
+            forwardButton.setAttribute("class", "button disabled");
+            backButton.setAttribute("class", "button")
+        
+        }else if(maxNutInd <= 5){
+            console.log(2);
+            forwardButton.setAttribute("class", "button");
+            backButton.setAttribute("class", "button disabled")
+        
+        }else{
+            console.log(3);
+            forwardButton.setAttribute("class", "button");
+            backButton.setAttribute("class", "button")
+        }</code></code></pre>
+        
+                            <p>The final snippet of code will change the class of the buttons depending on if they are applicable. For example, if the first five items are displayed, then the back button would only function to refresh. Similarly, once the final item is being shown, the forward button becomes useless. To prevent the user from pointlessly refreshing the page, I created a class named button disabled that prevents it from being clicked.</p>
                         <h3>Example:</h3>
                 
         <form>
@@ -242,7 +299,6 @@ function buttonSelect(event, ndbIn){
                 </div>
             </div>
         </form>
-
         
         <div class="table-wrapper">
             <table>
@@ -296,9 +352,13 @@ function buttonSelect(event, ndbIn){
                   
                 </tbody>
             </table>
+            <ul class="actions">
+                <li><span class="button disabled" id="backButton" onclick="">Back</span></li>
+                <li><span class="button disabled" id="forwardButton" onclick="">Forward</span></li>
+            </ul>
         </div>
-                        </div>
-					</section>
+    
+        
 
 				<!-- Section -->
 					<section class="wrapper style1">
@@ -319,7 +379,6 @@ function buttonSelect(event, ndbIn){
 							</div>
 						</div>
 					</section>
-			</div>
 
 		<!-- Footer -->
 
@@ -330,6 +389,6 @@ function buttonSelect(event, ndbIn){
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-            <script src="assets/js/foodReport.js"></script>
+            <script src="assets/js/foodReportThree.js"></script>
 	</body>
 </html>

@@ -31,10 +31,10 @@ function searchFoodButton(event){
 function buttonSelect(event, ndbIn, offsetIn){
     
     var i;
-    var maxNut = offsetIn + 5;
-    var minNut = offsetIn - 5;
-    if(minNut < 0)
-        minNut = 0;
+    var maxNutInd = offsetIn + 5;
+    var backButtInd = offsetIn - 5;
+    if(backButtInd < 0)
+        backButtInd = 0;
     
     var nutTable = document.getElementById("nutrition_body");
     while (nutTable.firstChild) {
@@ -53,10 +53,10 @@ function buttonSelect(event, ndbIn, offsetIn){
         
         var nutrientLength = response.report.food.nutrients.length;
         if(offsetIn + 5 > nutrientLength){
-            maxNut = nutrientLength;
+            maxNutInd = nutrientLength;
         }
             
-        for(i = offsetIn; i < maxNut; i++){
+        for(i = offsetIn; i < maxNutInd; i++){
             var newTr = document.createElement("tr");
             
             var nameIn = document.createElement("td");
@@ -74,15 +74,15 @@ function buttonSelect(event, ndbIn, offsetIn){
             nutTable.appendChild(newTr);
         }
         
-        forwardButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + maxNut +")")
-        backButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + minNut +")")  
+        forwardButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + maxNutInd +")")
+        backButton.setAttribute("onclick", "buttonSelect(event, "+ ndbIn + ", " + backButtInd +")")  
           
-        if(maxNut === nutrientLength){
+        if(maxNutInd === nutrientLength){
             console.log(1);
             forwardButton.setAttribute("class", "button disabled");
             backButton.setAttribute("class", "button")
         
-        }else if(maxNut <= 5){
+        }else if(maxNutInd <= 5){
             console.log(2);
             forwardButton.setAttribute("class", "button");
             backButton.setAttribute("class", "button disabled")
