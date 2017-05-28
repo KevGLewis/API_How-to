@@ -13,63 +13,70 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
 	<body class="subpage">
-                                    <form>
-											<div class="row uniform">
-												<div class="9u 12u$(small)">
-													<input type="text" name="searchValue" id="searchValue" placeholder="Search Value" />
-												</div>
-												<div class="3u$ 12u$(small)">
-													<input type="submit" value="Search" class="fit" onClick="searchFoodOne(event)" />
-												</div>
-											</div>
-										</form>
-        <div class="resultValue">Search Term(s)
-        </div>
+        <form>
+            <div class="row uniform">
+                <div class="9u 12u$(small)">
+                    <input type="text" name="searchValue" id="searchValue" placeholder="Search Value" />
+                </div>
+                <div class="3u$ 12u$(small)">
+                    <input type="submit" value="Search" class="fit" onClick="searchFoodButton(event)" />
+                </div>
+            </div>
+        </form>
         
         <div class="table-wrapper">
-											<table>
-												<thead>
-													<tr>
-														<th>Name</th>
-														<th>Description</th>
-														<th>Price</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="resultName">Item 1</td>
-														<td class="resultDescription">Ante turpis integer aliquet porttitor.</td>
-														<td>29.99</td>
-													</tr>
-													<tr>
-														<td class="resultName">Item 2</td>
-														<td class="resultDescription">Vis ac commodo adipiscing arcu aliquet.</td>
-														<td>19.99</td>
-													</tr>
-													<tr>
-														<td class="resultName">Item 3</td>
-														<td class="resultDescription"> Morbi faucibus arcu accumsan lorem.</td>
-														<td>29.99</td>
-													</tr>
-													<tr>
-														<td class="resultName">Item 4</td>
-														<td class="resultDescription">Vitae integer tempus condimentum.</td>
-														<td>19.99</td>
-													</tr>
-													<tr>
-														<td class="resultName">Item 5</td>
-														<td class="resultDescription">Ante turpis integer aliquet porttitor.</td>
-														<td>29.99</td>
-													</tr>
-												</tbody>
-												<tfoot>
-													<tr>
-														<td colspan="2"></td>
-														<td>100.00</td>
-													</tr>
-												</tfoot>
-											</table>
-										</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>NDB Number</th>
+                        <th>Description</th>
+                        <th>Selection</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>Nutritional Information:</h2>
+        <div class="table-wrapper">
+            <table id"nutrition_info">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Unit</th>
+                    </tr>
+                </thead>
+                <tbody id="nutrition_body">
+                  
+                </tbody>
+            </table>
+        </div>
 
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
@@ -78,7 +85,7 @@
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-            <script src="assets/js/test.js"></script>
+            <script src="assets/js/searchTest.js"></script>
 
 	</body>
 </html>

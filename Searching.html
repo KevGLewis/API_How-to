@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<!--
+	Urban by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+    test123
+-->
+<html>
+	<head>
+		<title>USDA Database API by Kevin Lewis</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="subpage">
+
+		<!-- Header -->
+			<header id="header">
+				<div class="logo"><a href="index.html">USDA Database API <span>by Kevin Lewis</span></a></div>
+				<a href="#menu">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="generic.html">Generic</a></li>
+					<li><a href="elements.html">Elements</a></li>
+				</ul>
+			</nav>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Section -->
+					<section class="wrapper">
+						<div class="inner">
+							<header class="align-center">
+								<h2>Search the Database</h2>
+							</header>
+							<h3>Searching</h3>
+                            <p>Let's start searching for food! In this example, we will take a search term from the user and then list the results. Let's first start by getting the search parameter(s) from the user.</p>
+						<h3>Step 1: </h3>
+                            <div class="row 200%">
+								<div class="6u 12u$(medium)" >HTML:
+                                    <pre><code>&lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;form&gt;
+       &lt;div&gt;
+           &lt;div&gt;
+               &lt;input type="text" name="searchValue" id="searchValue" placeholder="Search Value" /&gt;
+           &lt;/div&gt;
+           &lt;div&gt;
+               &lt;input type="submit" value="Search" onClick="searchFood(event)" /&gt;
+           &lt;/div&gt;
+       &lt;/div&gt;
+   &lt;/form&gt;
+   &lt;div&gt; Search Term(s)
+    &lt;/div&gt;
+ &lt;script src="example.js"&gt;&lt;script&gt;
+  &lt;/body&gt;
+
+&lt;/html&gt; </code></pre>
+                                </div>
+								<div class="6u$ 12u$(medium)" >Javascript:
+                        
+                                    <pre><code>var apiKey = INSERT_KEY_HERE
+
+function searchFood(event){
+    
+    var searchValue = document.getElementById("searchValue").value;
+    console.log(searchValue);
+    var resultValue = document.getElementById("resultValue");
+    
+    resultValue.textContent = searchValue;
+    event.preventDefault();
+}</code></pre>
+                                </div>
+                            </div>
+                            <p>Let's look at what is going on here. It is a basic javascript function that takes tha value within the searchValue form (document.getElementById("searchValue").value) and then displays the value within the div we put below the forms, (resultValue.textContent = searchValue). On a website it should function as follows:</p>
+                            <form>
+											<div class="row uniform">
+												<div class="9u 12u$(small)">
+													<input type="text" name="searchValue" id="searchValue" placeholder="Search Value" />
+												</div>
+												<div class="3u$ 12u$(small)">
+													<input type="submit" value="Search" class="fit" onClick="searchFoodOne(event)" />
+												</div>
+											</div>
+										</form>
+                        <div id="resultValue">Search Parameters are: </div>
+                            
+                           <h3>Step 2:</h3> 
+                                <p>Now we need to take this search parameter and present the results the to the user. From a high level, we are going to send the search parameters to the API, format the results, and display the results in a table. To make this process slightly easier, we'll start out with a pre-existing html table so we'll only need to replace the values in lieu of creating a new table</p>
+                            <div class="row 200%">
+								<div class="6u 12u$(medium)" style="overflow:scroll; height:400px;">HTML:
+                                    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;body class="subpage"&gt;
+        &lt;form&gt;
+            &lt;div class="row uniform"&gt;
+                &lt;div class="9u 12u$(small)"&gt;
+                    &lt;input type="text" name="searchValue" id="searchValue" placeholder="Search Value" /&gt;
+                &lt;/div&gt;
+                &lt;div class="3u$ 12u$(small)"&gt;
+                    &lt;input type="submit" value="Search" class="fit" onClick="searchFood(event)" /&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+        
+        &lt;div class="table-wrapper"&gt;
+            &lt;table&gt;
+                &lt;thead&gt;
+                    &lt;tr&gt;
+                        &lt;th&gt;NDB Number&lt;/th&gt;
+                        &lt;th&gt;Description&lt;/th&gt;
+                    &lt;/tr&gt;
+                &lt;/thead&gt;
+                &lt;tbody&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;nNDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                    &lt;/tr&gt;
+                &lt;/tbody>
+            &lt;/table>
+        &lt;/div>
+ &lt;script src="example.js"&gt;&lt;script&gt;
+  &lt;/body&gt;
+&lt;/html&gt; </code></pre>
+                                </div>
+								<div class="6u$ 12u$(medium)" style="overflow:scroll; height:400px;">Javascript:
+                        
+                                    <pre><code>var apiKey = INSERT_KEY_HERE
+
+function searchFood(event){
+    
+    var searchValue = document.getElementById("searchValue").value;
+    var ndbNumb = document.getElementsByClassName("ndb_numb");
+    var resultDescriptions = document.getElementsByClassName("resultDescription")
+    
+    var req = new XMLHttpRequest();
+    req.open('GET', 'https://api.nal.usda.gov/ndb/search/?format=json&q='+ searchValue +'&sort=r&max=5&offset=0&api_key=' + apiKey, true)
+    req.addEventListener('load',function(){
+      if(req.status >= 200 && req.status < 400){
+        var response = JSON.parse(req.responseText);
+          for(var i = 0; i < resultDescriptions.length; i++){
+              resultDescriptions[i].textContent = response.list.item[i].name;
+              ndbNumb[i].textContent = response.list.item[i].ndbno;
+          }
+          
+      } else {
+        console.log("Error in network request: " + req.statusText);
+      }
+    });
+    req.send(null);
+    
+    event.preventDefault();
+}
+}</code></pre>
+                                </div>
+                            </div>
+                            <p>Let's breakdown what is going on. First, Let's go through the HTML. We've added a table to the search parameter submittal form we had in the previous example. The table has two enteries, NDB number and description. Each is separated into its respective classes. This will make it easier for us to search through the document to find the nodes that we want to change. </p>
+                            <p>Our javascript function starts by searching the document to get the search value / parameter and the NDB/description fields that we are going to fill-in. To do this, we are going to use the getElementBy commands and gather the nodes based on the ID or class. For example, to get all of the NDB number and description nodes, we searched used the getElementsByClassName function and searched by their respective class names. This function returns an array of nodes. Now that the nodes have been collected, the function moves onto the GET request. </p>
+                            <h4>Get Request</h4>
+                            <p>We start by open a request by creating a new request through the XMLHttpRequest(). The we will open our GET request through the open function. Notice, that this is where we fill out the request address including the previously discussed parameters. For our GET request, this is where all of our parameters will be fed through. A POST request would require us to create an object to be sent along within the body of our request. The final variable within the open function is to indicate if our request is AJAX or not. AJAX stands for Asynchronous JavaScript and XML, though we generally only car about the javascript portion of it. Basically AJAX means that we wait for a response from our server before continuing with the rest of the function. We'll see the benefit of this soon.</p>
+                            <p>Next, we add the event listener to the request, which will cause the associated function to only run after the request has received its response. The function will first check if the status is within the 200-400 range. The general rule of thumb is that a status outside of this range is indicative of an error. In this case the function will log the error to the console. If the function is successful, we can start to fill out the table with the results. The response text we first receive is not usable. Therefore, the first is to parse the response into the JSON format. A quick aside about JSON.
+                            <h4>A Quick JSON Aside</h4>
+                            <p>JSON (Javascript Object Notation) is a lightweight data-interchange format. It is very similar to the name/value pairs and arrays seem in javascript. For example if we created the following JSON object:</p>
+                            <pre><code>var jsonObject = {"foo":"bar"}</code></pre>
+                            <p>We could access the bar data just as we would with a javascript key/value pair:</p>
+                            <pre><code>jsonObject.foo 
+// = "bar"</code></pre>
+                            <h4>Get Request Continued</h4>
+                            <p>Now that we have the response in a usable format, we can start to fill out the table. The for loop will go through all of the NDB Number and description nodes and fill out the information from the food items. It is with these two steps that AJAX becomes important. The code may seem to happen instantaneously, but there is a small delay between when the request is made and when a response is seen. If the function didin't wait for the response to load, an error would occur as there would not yet be a response to be parsed. You may also notice that the send function (req.send(null)) occurs after the function that will process the request. Once again, this is because the function will not run until the response from the request has been loaded. The final line prevents the page from automatically reloading after our function has ended.</p>
+                            <h3>Example</h3>
+                            <p>See below for a working example</p>
+                            <form>
+                                <div class="row uniform">
+                                    <div class="9u 12u$(small)">
+                                        <input type="text" name="searchValue" id="searchValueTwo" placeholder="Search Value" />
+                                    </div>
+                                    <div class="3u$ 12u$(small)">
+                                        <input type="submit" value="Search" class="fit" onClick="searchFood(event)" />
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>NDB Number</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="ndb_numb">NDB#</td>
+                                            <td class="resultDescription">Description</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ndb_numb">NDB#</td>
+                                            <td class="resultDescription">Description</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ndb_numb">NDB#</td>
+                                            <td class="resultDescription">Description</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ndb_numb">NDB#</td>
+                                            <td class="resultDescription">Description</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ndb_numb">NDB#</td>
+                                            <td class="resultDescription">Description</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+					</section>
+
+				<!-- Section -->
+					<section class="wrapper style1">
+						<div class="inner">
+							<header class="align-center">
+								<h2>Searching Part Two</h2>
+								<p>Follow the Below Link Expand on our Search</p>
+							</header>
+							<div class="flex flex-3">
+								<div class="col align-center">
+								</div>
+								<div class="col align-center">
+									<div class="image round fit">
+										<img src="images/search2.jpeg" alt="" />
+									</div>
+									<a href="#" class="button">Let's Go!</a>
+								</div>
+								<div class="col align-center">
+								</div>
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="copyright">
+					<ul class="icons">
+						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon fa-snapchat"><span class="label">Snapchat</span></a></li>
+					</ul>
+					<p>&copy; Untitled. All rights reserved. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.</p>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+            <script src="assets/js/search.js"></script>
+	</body>
+</html>

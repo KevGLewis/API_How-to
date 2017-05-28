@@ -36,7 +36,7 @@
 					<section class="wrapper">
 						<div class="inner">
 							<header class="align-center">
-								<h2>Searching the Database</h2>
+								<h2>Our First Call</h2>
 							</header>
 							<h3>Searching</h3>
                                     <p> Before we can display a food's nutritional information, we first need to search for available foods within the USDA database. Particularly, we need the food item's NBD number, a unique identifier assigned to each itme within the database. To do this, we are going to make use of the API's search functionality, which queries the database based on user provided keywords and returns a list of items that have the keyword with their description, scientific name, or commerical name fields. I recommend trying out the USDA's 
@@ -168,47 +168,6 @@
 	}
 }</code></pre></div>
                             <p>This is a lot of information, let break down the response. You should notice that some of the variable are the same as the call. But there are a couple items that we will need to know. The first is the start, end, and total parameters. These define where within the list of results. In this example, we are starting at the first, "0", term and ending at the 5th term out of 4015 total results. This information will come in handy when we implement paged lists later in this guide. The information about the results is held within the item parameter. This contains an array of results with their associated information. For our purposes we only care about the name and ndbno parameters. Once again the NBD is the unique identifier for each item. </p>
-                            <p>Let's start searching for food! In this example, we will take a search term from the user and then list the results</p>
-						<h3>Step 1: </h3>
-                            <div class="row 200%">
-								<div class="6u 12u$(medium)" >HTML:
-                                    <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-  &lt;form&gt;
-       &lt;div&gt;
-           &lt;div&gt;
-               &lt;input type="text" name="searchValue" id="searchValue" placeholder="Search Value" /&gt;
-           &lt;/div&gt;
-           &lt;div&gt;
-               &lt;input type="submit" value="Search" onClick="searchFood(event)" /&gt;
-           &lt;/div&gt;
-       &lt;/div&gt;
-   &lt;/form&gt;
-   &lt;div&gt; Search Term(s)
-    &lt;/div&gt;
- &lt;script src="example.js"&gt;&lt;script&gt;
-  &lt;/body&gt;
-&lt;/html&gt; </code></pre>
-                                </div>
-								<div class="6u$ 12u$(medium)" >Javascript:
-                        
-                                    <pre><code>var apiKey = INSERT_KEY_HERE
-
-function searchFoodOne(event){
-    
-    var searchValue = document.getElementById("searchValue").value;
-    console.log(searchValue);
-    var resultValue = document.getElementById("resultValue");
-    
-    resultValue.textContent = searchValue;
-    event.preventDefault();
-}</code></pre>
-                                </div>
-                            </div>
-                            <p>Let's look at what is going on here. It is a basic javascript function that takes tha value within the searchValue form and then displays the value within the div we put below the forms. On a website it should function as follows:</p>
                         </div>
 					</section>
 
@@ -216,15 +175,15 @@ function searchFoodOne(event){
 					<section class="wrapper style1">
 						<div class="inner">
 							<header class="align-center">
-								<h2>Our First Call</h2>
-								<p>Follow the Below Link to Learn How to Make a Call to the API</p>
+								<h2>Let's Search</h2>
+								<p>Learn How to Search the Database and Display the Results</p>
 							</header>
 							<div class="flex flex-3">
 								<div class="col align-center">
 								</div>
 								<div class="col align-center">
 									<div class="image round fit">
-										<img src="images/phone.jpeg" alt="" />
+										<img src="images/search.jpeg" alt="" />
 									</div>
 									<a href="#" class="button">Let's Go!</a>
 								</div>
@@ -256,6 +215,6 @@ function searchFoodOne(event){
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-
+            <script src="assets/js/search.js"></script>
 	</body>
 </html>

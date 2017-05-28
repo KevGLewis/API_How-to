@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<!--
+	Urban by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+    test123
+-->
+<html>
+	<head>
+		<title>USDA Database API by Kevin Lewis</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="subpage">
+
+		<!-- Header -->
+			<header id="header">
+				<div class="logo"><a href="index.html">USDA Database API <span>by Kevin Lewis</span></a></div>
+				<a href="#menu">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="generic.html">Generic</a></li>
+					<li><a href="elements.html">Elements</a></li>
+				</ul>
+			</nav>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Section -->
+					<section class="wrapper">
+						<div class="inner">
+							<header class="align-center">
+								<h1>Search Part Two:</h1>
+                                <p>The Search Continues...</p>
+							</header>
+							<h3>Selecting the NDB</h3>
+                            <p>Now that we can list the results, we need to give the user some way to select the food item they wish to find the nutritional information for. To do this we will add buttons to our table</p>
+						<h3>Add Buttons: </h3>
+                            <div class="row 200%">
+								<div class="6u 12u$(medium)" style="overflow:scroll; height:400px;">HTML:
+                                    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;body class="subpage"&gt;
+        &lt;form&gt;
+            &lt;div class="row uniform"&gt;
+                &lt;div class="9u 12u$(small)"&gt;
+                    &lt;input type="text" name="searchValue" id="searchValue" placeholder="Search Value" /&gt;
+                &lt;/div&gt;
+                &lt;div class="3u$ 12u$(small)"&gt;
+                    &lt;input type="submit" value="Search" class="fit" onClick="searchFood(event)" /&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+        
+        &lt;div class="table-wrapper"&gt;
+            &lt;table&gt;
+                &lt;thead&gt;
+                    &lt;tr&gt;
+                        &lt;th&gt;NDB Number&lt;/th&gt;
+                        &lt;th&gt;Description&lt;/th&gt;
+                        &lt;th&gt;Selection&lt;/th&gt;
+                    &lt;/tr&gt;
+                &lt;/thead&gt;
+                &lt;tbody&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;NDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                        &lt;td class="ndb_numb"&gt;nNDB#&lt;/td&gt;
+                        &lt;td class="resultDescription"&gt;Description&lt;/td&gt;
+                        &lt;td&gt;&lt;input type="submit" value="Select" class="button select" onclick="" /&gt;&lt;/td&gt
+                    &lt;/tr&gt;
+                &lt;/tbody>
+            &lt;/table>
+        &lt;/div>
+ &lt;script src="example.js"&gt;&lt;script&gt;
+  &lt;/body&gt;
+&lt;/html&gt; </code></pre>
+                                </div>
+								<div class="6u$ 12u$(medium)" style="overflow:scroll; height:400px;">Javascript:
+                        
+                                    <pre><code>var apiKey = INSERT_KEY_HERE
+
+function searchFood(event){
+    
+    var searchValue = document.getElementById("searchValue").value;
+    var ndbNumb = document.getElementsByClassName("ndb_numb");
+    var resultDescriptions = document.getElementsByClassName("resultDescription")
+    var searchButtons = document.getElementsByClassName("button select")
+    
+    var req = new XMLHttpRequest();
+    req.open('GET', 'https://api.nal.usda.gov/ndb/search/?format=json&q='+ searchValue +'&sort=r&max=5&offset=0&api_key=' + apiKey, true)
+    req.addEventListener('load',function(){
+      if(req.status >= 200 && req.status < 400){
+        var response = JSON.parse(req.responseText);
+          for(var i = 0; i < resultDescriptions.length; i++){
+              resultDescriptions[i].textContent = response.list.item[i].name;
+              ndbNumb[i].textContent = response.list.item[i].ndbno;
+              searchButtons[i].setAttribute( "onclick", "buttonSelect(event, "+response.list.item[i].ndbno+")" );
+              
+          }
+          
+      } else {
+        console.log("Error in network request: " + req.statusText);
+      }
+    });
+    req.send(null);
+    
+    event.preventDefault();
+}
+
+
+function buttonSelect(event, ndbIn){
+    console.log(ndbIn);
+    event.preventDefault();
+}</code></pre>
+                                </div>
+                            </div>
+                            <p>We added a column of buttons to our the table. Each button will eventually activate a function to search for the food item's nutritional information. To do so, the ndb number within the button. To do this we will embed the ndb within the onclick attribute's function call. This occurs within this line in the searchFood function. 
+                            <pre><code>searchButtons[i].setAttribute( "onclick", "buttonSelect(event, "+response.list.item[i].ndbno+")" );</code></pre>
+                            The buttonSelect function is passed the event and the ndb, storing the ndb. While the buttonSelect function only logs the ndb, now that we have the ndb we can move on to reqesting and listing the nutritional information</p>
+                            <form>
+            <div class="row uniform">
+                <div class="9u 12u$(small)">
+                    <input type="text" name="searchValue" id="searchValueThree" placeholder="Search Value" />
+                </div>
+                <div class="3u$ 12u$(small)">
+                    <input type="submit" value="Search" class="fit" onClick="searchFoodThree(event)" />
+                </div>
+            </div>
+        </form>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NDB Number</th>
+                        <th>Description</th>
+                        <th>Selection</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="ndb_numb">NDB#</td>
+                        <td class="resultDescription">Description</td>
+                        <td><input type="submit" value="Select" class="button select" onclick="" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+                        </div>
+					</section>
+
+				<!-- Section -->
+					<section class="wrapper style1">
+						<div class="inner">
+							<header class="align-center">
+								<h2>Searching Part Two</h2>
+								<p>Follow the Below Link Expand on our Search</p>
+							</header>
+							<div class="flex flex-3">
+								<div class="col align-center">
+								</div>
+								<div class="col align-center">
+									<div class="image round fit">
+										<img src="images/search2.jpeg" alt="" />
+									</div>
+									<a href="#" class="button">Let's Go!</a>
+								</div>
+								<div class="col align-center">
+								</div>
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="copyright">
+					<ul class="icons">
+						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon fa-snapchat"><span class="label">Snapchat</span></a></li>
+					</ul>
+					<p>&copy; Untitled. All rights reserved. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.</p>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+            <script src="assets/js/search.js"></script>
+	</body>
+</html>
